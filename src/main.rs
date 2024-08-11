@@ -31,7 +31,12 @@ async fn proxy(req: HttpRequest) -> Result<HttpResponse> {
         if let Ok(url) = Url::parse(&decoded_url) {
             // Make the request to the target URL
             let client = Client::new();
-            let mut response = match client.get(url).send().await {
+            let mut request_builder = client.get(url);
+            // Copy headers from the original request to the proxied request
+            for (key, value) in req.headers().iter() {
+                request_builder = request_builder.header(key, value.clone());
+            }
+            let mut response = match request_builder.send().await {
                 Ok(resp) => resp,
                 Err(_) => return Ok(HttpResponse::InternalServerError().body("Failed to fetch the destination URL")),
             };
@@ -40,12 +45,14 @@ async fn proxy(req: HttpRequest) -> Result<HttpResponse> {
 
             // Copy headers from the upstream response to the client response
             for (key, value) in response.headers().iter() {
+                println!("Header: {} - {}", key.as_str(), value.to_str().unwrap_or(""));
                 client_response.append_header((key.as_str(), value.to_str().unwrap_or("")));
             }
 
             // Create a streaming response
             let response_stream = async_stream::stream! {
                 while let Some(chunk) = response.chunk().await.unwrap_or(None) {
+                    println!("Got Chunk?");
                     yield Ok::<Bytes, actix_web::Error>(Bytes::from(chunk));
                 }
             };
