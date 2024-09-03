@@ -75,7 +75,6 @@ async fn handle(req: IncomingRequest, response_out: ResponseOutparam) {
             while let Some(chunk) = stream.next().await {
                 match chunk {
                     Ok(chunk) => {
-                        println!("Got Chunk! {} bytes", chunk.len());
                         if let Err(e) = body.send(chunk).await {
                             eprintln!("Error sending chunk: {e:#}");
                         }
