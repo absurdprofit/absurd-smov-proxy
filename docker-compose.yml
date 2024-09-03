@@ -1,0 +1,11 @@
+services:
+  absurd-smov-proxy:
+    build:
+      args:
+        - provenance=false
+      context: .
+    image: absurd-smov-proxy
+    container_name: absurd-smov-proxy
+    ports:
+      - "3000:80"
+    runtime: io.containerd.spin.v2

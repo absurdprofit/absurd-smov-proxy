@@ -77,10 +77,14 @@ async fn handle(req: IncomingRequest, response_out: ResponseOutparam) {
                     Ok(chunk) => {
                         if let Err(e) = body.send(chunk).await {
                             eprintln!("Error sending chunk: {e:#}");
+                            let _ = body.close(); // something went wrong, end stream
+                            break;
                         }
                     },
                     Err(e) => {
                         eprintln!("Error reading chunk: {e:#}");
+                        let _ = body.close(); // something went wrong, end stream
+                        break;
                     }
                 }
             }
