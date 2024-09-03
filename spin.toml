@@ -1,0 +1,18 @@
+spin_manifest_version = 2
+
+[application]
+name = "absurd-smov-proxy"
+version = "0.1.0"
+authors = ["absurdprofit <nahtanjohn1l@gmail.com>"]
+description = ""
+
+[[trigger.http]]
+route = "/proxy"
+component = "absurd-smov-proxy"
+
+[component.absurd-smov-proxy]
+source = "target/wasm32-wasi/release/absurd_smov_proxy.wasm"
+allowed_outbound_hosts = ["https://*", "http://*"]
+[component.absurd-smov-proxy.build]
+command = "cargo build --target wasm32-wasi --release"
+watch = ["src/**/*.rs", "Cargo.toml"]
