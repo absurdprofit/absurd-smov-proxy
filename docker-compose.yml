@@ -3,6 +3,7 @@ services:
     build:
       args:
         - provenance=false
+        - PLATFORM=wasi/wasm
       context: .
     image: absurd-smov-proxy
     container_name: absurd-smov-proxy
