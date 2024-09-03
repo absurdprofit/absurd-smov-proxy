@@ -11,6 +11,7 @@ RUN rustup target add wasm32-wasi
 
 RUN ./spin build
 
+# reference: https://www.fermyon.com/blog/spin-in-docker
 FROM --platform=wasi/wasm scratch
 
 COPY --from=build /usr/local/build/spin.toml /spin.toml
